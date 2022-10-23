@@ -1,61 +1,49 @@
 package homework;
 
-import java.util.*;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class CustomerService {
 
     //todo: 3. надо реализовать методы этого класса
 
-    TreeMap<Customer, String> tree;
+    private final TreeMap<Customer, String> customerStringTreeMap;
 
     public CustomerService() {
 
-        this.tree = new TreeMap<Customer, String>(new Comparator<Customer>() {
-            public int compare(Customer o1, Customer o2) {
-                return o1.compareTo(o2);
-            }
-        });
+        this.customerStringTreeMap = new TreeMap<>();
 
     }
 
     public Map.Entry<Customer, String> getSmallest() {
 
-        TreeMap<Customer, String> fakeTree = getFakeTree(tree);
-
-        return fakeTree.firstEntry();
+        return Map.entry(new Customer(
+                        customerStringTreeMap.firstEntry()
+                                .getKey()
+                                .getId(),
+                        customerStringTreeMap.firstEntry()
+                                .getKey()
+                                .getName(),
+                        customerStringTreeMap.firstEntry()
+                                .getKey()
+                                .getScores()),
+                customerStringTreeMap.firstEntry().getValue());
     }
 
     public Map.Entry<Customer, String> getNext(Customer customer) {
 
-        TreeMap<Customer, String> fakeTree = getFakeTree(tree);
+        if (customerStringTreeMap.higherKey(customer) == null) return null;
 
-        if (fakeTree.higherKey(customer) == null) return null;
+        Customer nextCustomer = customerStringTreeMap.higherKey(customer);
 
-        Customer cus = fakeTree.higherKey(customer);
+        return Map.entry(new Customer(nextCustomer.getId(), nextCustomer.getName(), nextCustomer.getScores()), customerStringTreeMap.get(nextCustomer));
 
-        Set sett = fakeTree.entrySet();
-        Iterator i = sett.iterator();
-        while (i.hasNext()) {
-            Map.Entry me = (Map.Entry) i.next();
-            if (me.getKey().equals(cus)) {
-                return me;
-            }
-        }
-        return fakeTree.lastEntry();
     }
 
     public void add(Customer customer, String data) {
 
-        tree.put(customer, data);
+        customerStringTreeMap.put(customer, data);
+
     }
 
-    public TreeMap<Customer, String> getFakeTree(TreeMap<Customer, String> tree) {
-        TreeMap<Customer, String> fakeTree = new TreeMap<>();
-
-        for (Map.Entry<Customer, String> x : tree.entrySet()
-        ) {
-            fakeTree.put(new Customer(x.getKey().getId(), x.getKey().getName(), x.getKey().getScores()), x.getValue());
-        }
-        return fakeTree;
-    }
 }
