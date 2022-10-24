@@ -17,15 +17,14 @@ public class CustomerService {
 
     public Map.Entry<Customer, String> getSmallest() {
 
+        Customer firstEntryCustomer = customerStringTreeMap.firstEntry().getKey();
+
         return Map.entry(new Customer(
-                        customerStringTreeMap.firstEntry()
-                                .getKey()
+                        firstEntryCustomer
                                 .getId(),
-                        customerStringTreeMap.firstEntry()
-                                .getKey()
+                        firstEntryCustomer
                                 .getName(),
-                        customerStringTreeMap.firstEntry()
-                                .getKey()
+                        firstEntryCustomer
                                 .getScores()),
                 customerStringTreeMap.firstEntry().getValue());
     }
