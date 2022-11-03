@@ -7,7 +7,7 @@ public class TestLogging implements TestLoggingInterface {
         System.out.println("отработал с " + param);
     }
 
-    //@Log
+    @Log
     public void calculation(int param1, int param2) {
         System.out.println("отработал с " + param1 + " " + param2);
     }

@@ -4,37 +4,56 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Ioc {
 
     private Ioc() {
+
     }
 
     static TestLoggingInterface createTestLoggingClass() {
 
-        InvocationHandler handler = new DemoIocHandler(new TestLogging());
+        InvocationHandler handler = new MyIocHandler(new TestLogging());
 
         return (TestLoggingInterface) Proxy.newProxyInstance(Ioc.class.getClassLoader(),
                 new Class<?>[]{TestLoggingInterface.class},
                 handler);
     }
 
-    static class DemoIocHandler implements InvocationHandler {
+    static class MyIocHandler implements InvocationHandler {
 
         private final TestLoggingInterface myTestLogging;
+        Set<String> methodsWithAnnotationLog = new HashSet<>();
 
-        DemoIocHandler(TestLoggingInterface myTest) {
+        MyIocHandler(TestLoggingInterface myTest) {
+
             this.myTestLogging = myTest;
+
+            addMethodsWithLogAnnotation();
+
+        }
+
+        private void addMethodsWithLogAnnotation() {
+
+            Method[] methods = myTestLogging.getClass().getMethods();
+
+            for (var method : methods) {
+
+                if (method.isAnnotationPresent(Log.class)) {
+
+                    methodsWithAnnotationLog.add(method.getName() + Arrays.toString(method.getParameterTypes()));
+                }
+            }
+
         }
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
-            var hasAnnotation = myTestLogging.getClass()
-                    .getMethod(method.getName(), method.getParameterTypes())
-                    .isAnnotationPresent(Log.class);
+            if (methodsWithAnnotationLog.contains(method.getName() + Arrays.toString(method.getParameterTypes()))) {
 
-            if (hasAnnotation) {
                 System.out.println("executed method: " + method.getName() + " param: " + Arrays.toString(args));
 
             }
