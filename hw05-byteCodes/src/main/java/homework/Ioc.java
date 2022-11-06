@@ -25,7 +25,7 @@ public class Ioc {
     static class MyIocHandler implements InvocationHandler {
 
         private final TestLoggingInterface myTestLogging;
-        Set<String> methodsWithAnnotationLog = new HashSet<>();
+        private final Set<String> methodsWithAnnotationLog = new HashSet<>();
 
         MyIocHandler(TestLoggingInterface myTest) {
 
@@ -43,16 +43,20 @@ public class Ioc {
 
                 if (method.isAnnotationPresent(Log.class)) {
 
-                    methodsWithAnnotationLog.add(method.getName() + Arrays.toString(method.getParameterTypes()));
+                    methodsWithAnnotationLog.add(getMethodAndParamTypeAsString(method));
                 }
             }
 
         }
 
+        private String getMethodAndParamTypeAsString(Method method) {
+            return method.getName() + Arrays.toString(method.getParameterTypes());
+        }
+
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
-            if (methodsWithAnnotationLog.contains(method.getName() + Arrays.toString(method.getParameterTypes()))) {
+            if (methodsWithAnnotationLog.contains(getMethodAndParamTypeAsString(method))) {
 
                 System.out.println("executed method: " + method.getName() + " param: " + Arrays.toString(args));
 
