@@ -1,14 +1,15 @@
 package ATM.Cassetes;
 
-import ATM.Banknotes.BanknoteRu;
+import ATM.Banknotes.Banknote;
+
 
 import java.util.Stack;
 
 public class Cassett implements Casset {
 
-      private final Stack<BanknoteRu> money = new Stack<>();
+      private final Stack<Banknote> money = new Stack<>();
 
-       public Stack<BanknoteRu> getMoneyStack () {
+       public Stack<Banknote> getMoneyStack () {
                 return money;
         }
 

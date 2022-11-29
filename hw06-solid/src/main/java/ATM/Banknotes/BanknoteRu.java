@@ -1,5 +1,7 @@
 package ATM.Banknotes;
 
+import bankomat.Nominal;
+
 public class BanknoteRu implements Banknote {
 
     Nominal nominal;

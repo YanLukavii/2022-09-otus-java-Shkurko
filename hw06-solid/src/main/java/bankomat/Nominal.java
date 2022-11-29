@@ -1,4 +1,4 @@
-package ATM.Banknotes;
+package bankomat;
 
 public enum Nominal {
 

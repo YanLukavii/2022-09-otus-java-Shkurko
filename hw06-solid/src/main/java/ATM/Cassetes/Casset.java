@@ -1,12 +1,13 @@
 package ATM.Cassetes;
 
-import ATM.Banknotes.BanknoteRu;
+import ATM.Banknotes.Banknote;
+
 
 import java.util.Stack;
 
 public interface Casset {
 
-    Stack<BanknoteRu> getMoneyStack ();
+    Stack<Banknote> getMoneyStack ();
 
 
 }
