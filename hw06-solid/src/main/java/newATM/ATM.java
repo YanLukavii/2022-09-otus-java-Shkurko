@@ -4,12 +4,10 @@ import java.util.List;
 
 public interface ATM {
 
-    void loadCellsWithMoneyByCollector();
+    void loadCellsWithMoneyByCollector() throws SomethingWrongException;
 
-    int getAmountOfMoneyInAtm ();
+    int getAmountOfCashBalance();
 
-    CellStoreage getCellStorage();
-
-    List<Banknote> getMoney(int n);
+    List<Banknote> getMoney(int n) throws SomethingWrongException;
 
 }

@@ -6,23 +6,26 @@ import java.util.List;
 
 public class ATMImpl implements ATM {
 
-    private CellStoreage cellStoreage;
+    private CellStorage cellStorage;
 
-    public void loadCellsWithMoneyByCollector() {
+    public void loadCellsWithMoneyByCollector()  {
 
-        this.cellStoreage = new CellStoreageImpl();
+        this.cellStorage = new CellStorageImpl();
 
-        for (Banknote x : Banknote.values()) {
+        for (Banknote banknote : Banknote.values()) {
             for (int i = 0; i < 100; i++) {
-                cellStoreage.getCellByFace(x).addBanknoteToCell(x);
+                cellStorage.getCellByFace(banknote).addBanknoteToCell(banknote);
             }
         }
     }
 
-    public int getAmountOfMoneyInAtm() {
+    public int getAmountOfCashBalance() {
         int amount = 0;
+
+        if(cellStorage == null) {return 0;}
+
         for (Banknote banknote : Banknote.values()) {
-            amount = amount + cellStoreage
+            amount = amount + cellStorage
                     .getCellByFace(banknote)
                     .getBanknoteList().size() * banknote
                     .faceValue();
@@ -30,11 +33,9 @@ public class ATMImpl implements ATM {
         return amount;
     }
 
-    public CellStoreage getCellStorage() {
-        return cellStoreage;
-    }
 
-    public List<Banknote> getMoney(int money) {
+
+    public List<Banknote> getMoney(int money) throws SomethingWrongException {
 
         List<Banknote> banknotesForClient = generateBanknoteList(money);
 
@@ -45,18 +46,19 @@ public class ATMImpl implements ATM {
             return banknotesForClient;
 
         } else {
-            System.out.println("Not enough money");
-            return new ArrayList<>();
+
+            throw new SomethingWrongException("Not enough money");
+
         }
     }
 
-    public boolean checkedMoneyInCell(List<Banknote> list) {
+    private boolean checkedMoneyInCell(List<Banknote> list) {
 
-        for (Banknote x : list) {
+        for (Banknote banknote : list) {
 
-            if (!(Collections.frequency(list, x) <= Collections.frequency(cellStoreage
-                    .getCellByFace(x)
-                    .getBanknoteList(), x))) {
+            if (!(Collections.frequency(list, banknote) <= Collections.frequency(cellStorage
+                    .getCellByFace(banknote)
+                    .getBanknoteList(), banknote))) {
 
                 return false;
             }
@@ -65,7 +67,7 @@ public class ATMImpl implements ATM {
         return true;
     }
 
-    public List<Banknote> generateBanknoteList(int money) {
+    private List<Banknote> generateBanknoteList(int money) throws SomethingWrongException {
 
         List<Banknote> banknotesForClient = new ArrayList<>();
 
@@ -84,15 +86,16 @@ public class ATMImpl implements ATM {
             money = money % banknote.faceValue();
         }
         if (money > 0) {
-            System.out.println("Incorrect sum");
+
+            throw new SomethingWrongException("incorrect amount");
         }
         return banknotesForClient;
     }
 
-    public void removeBanknotes(List<Banknote> list) {
+    private void removeBanknotes(List<Banknote> list) {
 
         for (Banknote x : list) {
-            cellStoreage.getCellByFace(x).removeBanknoteFromCell();
+            cellStorage.getCellByFace(x).removeBanknoteFromCell();
         }
 
     }

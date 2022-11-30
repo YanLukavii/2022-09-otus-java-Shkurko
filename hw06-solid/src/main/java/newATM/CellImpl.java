@@ -13,10 +13,13 @@ public class CellImpl implements Cell {
         this.cellType = cellType;
     }
 
-    public void addBanknoteToCell(Banknote banknote) {
+    public void addBanknoteToCell(Banknote banknote)  {
         if (cellType.faceValue() == banknote.faceValue()) {
             banknoteList.add(banknote);
-        } else System.out.println("Ne verniy nominal");
+        } else {
+
+            throw new SomethingWrongException("wrong denomination");
+        }
 
     }
 
@@ -27,8 +30,6 @@ public class CellImpl implements Cell {
     public List<Banknote> getBanknoteList() {
         return banknoteList;
     }
-
-
 
 
 }

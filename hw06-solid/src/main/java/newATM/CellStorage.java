@@ -1,6 +1,6 @@
 package newATM;
 
-public interface CellStoreage {
+public interface CellStorage {
 
    Cell getCellByFace(Banknote banknote);
 
