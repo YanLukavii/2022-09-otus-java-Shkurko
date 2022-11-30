@@ -13,7 +13,7 @@ public class Main {
 
         System.out.println(atm.getAmountOfCashBalance());
 
-        System.out.println(atm.getMoney(1600));
+        System.out.println(atm.getMoney(2750));
 
         System.out.println(atm.getAmountOfCashBalance());
 

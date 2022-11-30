@@ -35,7 +35,7 @@ public class ATMImpl implements ATM {
 
 
 
-    public List<Banknote> getMoney(int money) throws SomethingWrongException {
+    public List<Banknote> getMoney(int money)  {
 
         List<Banknote> banknotesForClient = generateBanknoteList(money);
 
@@ -67,7 +67,7 @@ public class ATMImpl implements ATM {
         return true;
     }
 
-    private List<Banknote> generateBanknoteList(int money) throws SomethingWrongException {
+    private List<Banknote> generateBanknoteList(int money)  {
 
         List<Banknote> banknotesForClient = new ArrayList<>();
 
