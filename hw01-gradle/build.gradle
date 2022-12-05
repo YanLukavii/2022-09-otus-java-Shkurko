@@ -8,6 +8,8 @@ targetCompatibility = JavaVersion.VERSION_17
 
 dependencies {
     implementation 'com.google.guava:guava'
+    implementation 'org.assertj:assertj-core:3.23.1'
+    implementation 'junit:junit:4.13.2'
 }
 
 shadowJar {
