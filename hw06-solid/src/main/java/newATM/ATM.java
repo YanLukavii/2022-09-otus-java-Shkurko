@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface ATM {
 
-    void loadCellsWithMoneyByCollector() throws SomethingWrongException;
+    void loadCellsWithMoneyByCollector(int numberOfBanknotes) throws SomethingWrongException;
 
     int getAmountOfCashBalance();
 

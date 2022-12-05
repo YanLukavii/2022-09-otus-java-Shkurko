@@ -9,7 +9,7 @@ public class Main {
 
         System.out.println(atm.getAmountOfCashBalance());
 
-        atm.loadCellsWithMoneyByCollector();
+        atm.loadCellsWithMoneyByCollector(100);
 
         System.out.println(atm.getAmountOfCashBalance());
 

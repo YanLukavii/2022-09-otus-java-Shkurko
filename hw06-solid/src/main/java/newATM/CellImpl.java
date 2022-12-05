@@ -8,7 +8,6 @@ public class CellImpl implements Cell {
     private final List<Banknote> banknoteList = new ArrayList<>();
     private final Banknote cellType;
 
-
     public CellImpl(Banknote cellType) {
         this.cellType = cellType;
     }
@@ -17,7 +16,6 @@ public class CellImpl implements Cell {
         if (cellType.faceValue() == banknote.faceValue()) {
             banknoteList.add(banknote);
         } else {
-
             throw new SomethingWrongException("wrong denomination");
         }
 

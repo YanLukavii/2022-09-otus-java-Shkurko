@@ -21,7 +21,7 @@ public class ATMTest {
     void initATM() {
 
         atm = new ATMImpl();
-        atm.loadCellsWithMoneyByCollector();
+        atm.loadCellsWithMoneyByCollector(100);
     }
 
     @Test
