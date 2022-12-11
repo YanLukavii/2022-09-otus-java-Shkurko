@@ -3,10 +3,12 @@ package ru.otus.ProcessorTests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import ru.otus.model.Message;
+import ru.otus.processor.DateTimeProvider;
 import ru.otus.processor.EvenDropException;
 import ru.otus.processor.ProcessorDropExceptionEvenSec;
-
+import java.time.LocalDateTime;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
@@ -23,9 +25,10 @@ public class ProcessorDropExceptionEvenSecTest {
     @Test
     @DisplayName("Тест на нечетных секундах")
     void testOddSec() {
-        int seconds = 23;
-        new LocalDateTimeSpy(seconds);
-        var process = new ProcessorDropExceptionEvenSec(LocalDateTimeSpy::now);
+        DateTimeProvider dateTimeProvider = Mockito.mock(DateTimeProvider.class);
+        Mockito.when(dateTimeProvider.getTime())
+                .thenReturn(LocalDateTime.of(1, 1, 1, 1, 1, 23));
+        var process = new ProcessorDropExceptionEvenSec(dateTimeProvider);
 
         assertThat(message).isEqualTo(process.process(message));
     }
@@ -33,9 +36,10 @@ public class ProcessorDropExceptionEvenSecTest {
     @Test
     @DisplayName("Тест на четных секундах")
     void testEvenSec() {
-        int seconds = 22;
-        new LocalDateTimeSpy(seconds);
-        var processor = new ProcessorDropExceptionEvenSec(LocalDateTimeSpy::now);
+        DateTimeProvider dateTimeProvider = Mockito.mock(DateTimeProvider.class);
+        Mockito.when(dateTimeProvider.getTime())
+                .thenReturn(LocalDateTime.of(1, 1, 1, 1, 1, 22));
+        var processor = new ProcessorDropExceptionEvenSec(dateTimeProvider);
 
         assertThatExceptionOfType(EvenDropException.class).isThrownBy(() -> processor.process(message));
     }
