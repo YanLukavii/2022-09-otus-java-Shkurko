@@ -27,7 +27,7 @@ public class ProcessorDropExceptionEvenSecTest {
     void testOddSec() {
         DateTimeProvider dateTimeProvider = Mockito.mock(DateTimeProvider.class);
         Mockito.when(dateTimeProvider.getTime())
-                .thenReturn(LocalDateTime.of(1, 1, 1, 1, 1, 23));
+                .thenReturn(LocalDateTime.of(2022, 1, 1, 1, 1, 23));
         var process = new ProcessorDropExceptionEvenSec(dateTimeProvider);
 
         assertThat(message).isEqualTo(process.process(message));
