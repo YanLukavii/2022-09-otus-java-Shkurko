@@ -18,16 +18,20 @@ public class ResourcesFileLoader implements Loader {
     public List<Measurement> load() {
         //читает файл, парсит и возвращает результат
         List<Measurement> loadedMeasurementList = new ArrayList<>();
-
-        try (var jsonReader = Json.createReader(ResourcesFileLoader.class.getClassLoader()
-                .getResourceAsStream(filename))) {
-            var jsonFromTheFile = jsonReader.read();
-            Object[] obj = jsonFromTheFile.asJsonArray().toArray();
-            var gson = new Gson();
-            for (Object object:obj) {
-                loadedMeasurementList.add(gson.fromJson(object.toString(),Measurement.class));
+        try {
+            try (var jsonReader = Json.createReader(ResourcesFileLoader.class.getClassLoader()
+                    .getResourceAsStream(filename))) {
+                var jsonFromTheFile = jsonReader.read();
+                Object[] obj = jsonFromTheFile.asJsonArray().toArray();
+                var gson = new Gson();
+                for (Object object:obj) {
+                    loadedMeasurementList.add(gson.fromJson(object.toString(),Measurement.class));
+                }
             }
+        }catch (NullPointerException e) {
+            throw new FileProcessException("Вернул нулл при загрузке json`a из файла");
         }
+
         return loadedMeasurementList;
     }
 }

@@ -1,13 +1,15 @@
 package ru.otus.dataprocessor;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.Map;
 
 public class FileSerializer implements Serializer {
 
-    String filename;
+    private final String filename;
 
     public FileSerializer(String fileName) {
         this.filename = fileName;
@@ -20,7 +22,7 @@ public class FileSerializer implements Serializer {
         try (var out = new PrintWriter(new FileWriter(filename))) {
             out.write(gson.toJson(data));
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new FileProcessException(e);
         }
     }
 }
