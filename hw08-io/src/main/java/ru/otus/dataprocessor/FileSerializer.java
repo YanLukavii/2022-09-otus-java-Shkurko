@@ -1,10 +1,8 @@
 package ru.otus.dataprocessor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-
-import java.io.FileWriter;
-import java.io.PrintWriter;
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 public class FileSerializer implements Serializer {
@@ -18,10 +16,10 @@ public class FileSerializer implements Serializer {
     @Override
     public void serialize(Map<String, Double> data) {
         //формирует результирующий json и сохраняет его в файл
-        var gson = new Gson();
-        try (var out = new PrintWriter(new FileWriter(filename))) {
-            out.write(gson.toJson(data));
-        } catch (Exception e) {
+        var mapper = new ObjectMapper();
+        try {
+            mapper.writeValue(new File(filename), data);
+        } catch (IOException e) {
             throw new FileProcessException(e);
         }
     }
