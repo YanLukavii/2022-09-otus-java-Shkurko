@@ -3,7 +3,6 @@ package ru.otus.dataprocessor;
 import com.google.gson.Gson;
 import jakarta.json.Json;
 import ru.otus.model.Measurement;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +27,7 @@ public class ResourcesFileLoader implements Loader {
                 loadedMeasurementList.add(gson.fromJson(object.toString(), Measurement.class));
             }
         } catch (NullPointerException e) {
-            throw new FileProcessException("Проблема с файлом");
+            throw new FileProcessException("Проблема с файлом", e);
         }
         return loadedMeasurementList;
     }
