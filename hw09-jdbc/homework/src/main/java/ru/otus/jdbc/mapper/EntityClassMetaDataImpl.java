@@ -23,7 +23,6 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
 
     @Override
     public Constructor<T> getConstructor() {
-
         var con = persistentClass.getDeclaredConstructors();
 
         for (Constructor<?> constructor : con) {
@@ -35,7 +34,6 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
 
     @Override
     public Field getIdField() {
-
         List<Field> list = getAllFields();
         for (Field x : list
         ) {
@@ -48,13 +46,11 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
 
     @Override
     public List<Field> getAllFields() {
-
         return List.of(persistentClass.getDeclaredFields());
     }
 
     @Override
     public List<Field> getFieldsWithoutId() {
-
         List<Field> list = getAllFields();
         List<Field> result = new ArrayList<>();
         for (Field x : list) {

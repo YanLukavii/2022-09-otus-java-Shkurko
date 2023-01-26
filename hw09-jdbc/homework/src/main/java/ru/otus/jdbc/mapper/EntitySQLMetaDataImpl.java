@@ -13,7 +13,6 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
 
     @Override
     public String getSelectAllSql() {
-
         return "select * from " + entityClassMetaData.getName();
     }
 
@@ -34,24 +33,12 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
 
     @Override
     public String getInsertSql() {
-
-       // return "INSERT INTO " + entityClassMetaData.getName();
-//Insert into Employees (ID, Name) values (1,'raj')
         List<Field> fieldsList = entityClassMetaData.getFieldsWithoutId();
-        StringBuilder fields = new StringBuilder();
-       /* for (Field x : fieldsList) {
-                fields.append(x.getName());
-                fields.append(", ");
-        }*/
-
-       // return "insert into " + entityClassMetaData.getName() + " (" + fields.substring(0,fields.length() - 2) + ") values (?)";
-       // return "insert into   manager  (label) values (?)";
         return "insert into " + entityClassMetaData.getName() + " (" + fieldsList.get(0).getName() + ") values (?)";
     }
 
     @Override
     public String getUpdateSql() {
-        //"update client set name = ? where id = ?"
         List<Field> fieldsList = entityClassMetaData.getFieldsWithoutId();
         StringBuilder fields = new StringBuilder();
         for (Field x : fieldsList) {

@@ -1,6 +1,6 @@
 package ru.otus.jdbc.mapper;
 
-import org.flywaydb.core.internal.util.StringUtils;
+import org.apache.commons.text.WordUtils;
 import ru.otus.core.repository.DataTemplate;
 import ru.otus.core.repository.DataTemplateException;
 import ru.otus.core.repository.executor.DbExecutor;
@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import org.apache.commons.text.WordUtils;
-
 
 /**
  * Сохратяет объект в базу, читает объект из базы
@@ -35,14 +33,20 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
             try {
                 if (entitySQLMetaData.getEntityClassMetaData().getAllFields().size() == 2) {
                     if (rs.next()) {
-                        return  (T) entitySQLMetaData.getEntityClassMetaData().getConstructor().newInstance(rs.getLong("id"), rs.getString("name"));
+                        return (T) entitySQLMetaData
+                                .getEntityClassMetaData()
+                                .getConstructor()
+                                .newInstance(rs.getLong("id"), rs.getString("name"));
                     }
 
                 }else
                 if (entitySQLMetaData.getEntityClassMetaData().getAllFields().size() == 3) {
                    if (rs.next()) {
-                        return (T) entitySQLMetaData.getEntityClassMetaData().getConstructor().newInstance(rs.getLong("id"), rs.getString("label"), rs.getString("param1"));
-                    }
+                       return (T) entitySQLMetaData
+                               .getEntityClassMetaData()
+                               .getConstructor()
+                               .newInstance(rs.getLong("id"), rs.getString("label"), rs.getString("param1"));
+                   }
 
                 }
 
@@ -80,73 +84,50 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
                 throw new DataTemplateException(e);
             }
         }).orElseThrow(() -> new RuntimeException("Unexpected error"));
-
-        //  throw new UnsupportedOperationException();
     }
-//NADO SDELAT chtob mnogo metodov dlya kuchi polei
+
     @Override
     public long insert(Connection connection, T client) {
-        List<Field> listFields =  entitySQLMetaData.getEntityClassMetaData().getFieldsWithoutId();
+        List<Field> listFields = entitySQLMetaData.getEntityClassMetaData().getFieldsWithoutId();
 
         List<Object> objectCollection = new ArrayList<>();
-        for (Field x:listFields) {
-            StringBuilder fieldsUpper = new StringBuilder();
-            String fieldsGetterMethodName = "";
-            fieldsUpper.append(" ").append(x.getName());
-            fieldsGetterMethodName ="get" + WordUtils.capitalizeFully(fieldsUpper.substring(1));
-            try {
+        try {
+            for (Field x : listFields) {
+                StringBuilder fieldsUpper = new StringBuilder();
+                String fieldsGetterMethodName = "";
+                fieldsUpper.append(" ").append(x.getName());
+                fieldsGetterMethodName = "get" + WordUtils.capitalizeFully(fieldsUpper.substring(1));
+
                 if (client.getClass().getDeclaredMethod(fieldsGetterMethodName).invoke(client) != null) {
                     objectCollection.add(client.getClass().getDeclaredMethod(fieldsGetterMethodName).invoke(client));
                 }
-
-               // objectCollection.add(client.getClass().getDeclaredMethod(fieldsGetterMethodName).invoke(client));
-            }  catch (Exception e) {
-                throw new DataTemplateException(e);
             }
-        }
-
-
-        try {
-            return dbExecutor.executeStatement(connection, entitySQLMetaData.getInsertSql(),
-                   // List.of(client.getClass().getDeclaredMethod("getLabel").invoke(client), client.getClass().getDeclaredMethod("getParam1").invoke(client)));
-            //List.of(client.getClass().getDeclaredMethod("getLabel").invoke(client)));
-                    objectCollection);
+            return dbExecutor.executeStatement(connection, entitySQLMetaData.getInsertSql(), objectCollection);
 
         } catch (Exception e) {
             throw new DataTemplateException(e);
         }
-        //  throw new UnsupportedOperationException();
     }
 
     @Override
     public void update(Connection connection, T client) {
-        List<Field> listFields =  entitySQLMetaData.getEntityClassMetaData().getAllFields();
+        List<Field> listFields = entitySQLMetaData.getEntityClassMetaData().getAllFields();
 
         List<Object> objectCollection = new ArrayList<>();
-        for (Field x:listFields) {
-            StringBuilder fieldsUpper = new StringBuilder();
-            String fieldsGetterMethodName = "";
-            fieldsUpper.append(" ").append(x.getName());
-            fieldsGetterMethodName ="get" + WordUtils.capitalizeFully(fieldsUpper.substring(1));
-            try {
+        try {
+            for (Field x : listFields) {
+                StringBuilder fieldsUpper = new StringBuilder();
+                String fieldsGetterMethodName = "";
+                fieldsUpper.append(" ").append(x.getName());
+                fieldsGetterMethodName = "get" + WordUtils.capitalizeFully(fieldsUpper.substring(1));
+
                 if (client.getClass().getDeclaredMethod(fieldsGetterMethodName).invoke(client) != null) {
                     objectCollection.add(client.getClass().getDeclaredMethod(fieldsGetterMethodName).invoke(client));
                 }
-
-                // objectCollection.add(client.getClass().getDeclaredMethod(fieldsGetterMethodName).invoke(client));
-            }  catch (Exception e) {
-                throw new DataTemplateException(e);
             }
-        }
-        try {
-            dbExecutor.executeStatement(connection, entitySQLMetaData.getUpdateSql(),
-                    //List.of(client.getClass().getDeclaredMethod("getName").invoke(client), client.getClass().getDeclaredMethod("getId").invoke(client)));
-                  //  List.of(client.getClass().getDeclaredMethod("getLabel").invoke(client), client.getClass().getDeclaredMethod("getNo").invoke(client)));
-                    objectCollection);
+            dbExecutor.executeStatement(connection, entitySQLMetaData.getUpdateSql(), objectCollection);
         } catch (Exception e) {
             throw new DataTemplateException(e);
         }
-        //  throw new UnsupportedOperationException();
-
     }
 }
