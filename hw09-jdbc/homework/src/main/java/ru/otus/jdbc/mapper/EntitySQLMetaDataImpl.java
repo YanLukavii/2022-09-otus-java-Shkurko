@@ -3,56 +3,58 @@ package ru.otus.jdbc.mapper;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
+public class EntitySQLMetaDataImpl<T> implements EntitySQLMetaData<T> {
 
-    private final EntityClassMetaData entityClassMetaData;
+    private final EntityClassMetaData<T> entityClassMetaData;
+    private final String entityClassName;
+    private final String idFieldName;
+    private final List<Field> fieldListWithoutId;
 
-    public EntitySQLMetaDataImpl(EntityClassMetaData entityClassMetaData) {
+    public EntitySQLMetaDataImpl(EntityClassMetaData<T> entityClassMetaData) {
         this.entityClassMetaData = entityClassMetaData;
+        this.entityClassName = entityClassMetaData.getName();
+        this.idFieldName = entityClassMetaData.getIdField().getName();
+        this.fieldListWithoutId = entityClassMetaData.getFieldsWithoutId();
     }
 
     @Override
     public String getSelectAllSql() {
-        return "select * from " + entityClassMetaData.getName();
+        return "select * from " + entityClassName;
     }
 
     @Override
     public String getSelectByIdSql() {
-        List<Field> fieldsList = entityClassMetaData.getFieldsWithoutId();
         StringBuilder fields = new StringBuilder();
-        String name = entityClassMetaData.getName();
-        for (Field x : fieldsList) {
+        for (Field field : fieldListWithoutId) {
             if (!fields.equals("")) {
                 fields.append(", ");
-                fields.append(x.getName());
+                fields.append(field.getName());
             } else
-                fields.append(x.getName());
+                fields.append(field.getName());
         }
-        return "select id "+ fields +" from " + name + " where id  = ?";
+        return "select " + idFieldName + " " + fields + " from " + entityClassName + " where " + idFieldName + "  = ?";
     }
 
     @Override
     public String getInsertSql() {
-        List<Field> fieldsList = entityClassMetaData.getFieldsWithoutId();
-        return "insert into " + entityClassMetaData.getName() + " (" + fieldsList.get(0).getName() + ") values (?)";
+        return "insert into " + entityClassName + " (" + fieldListWithoutId.get(0).getName() + ") values (?)";
     }
 
     @Override
     public String getUpdateSql() {
-        List<Field> fieldsList = entityClassMetaData.getFieldsWithoutId();
         StringBuilder fields = new StringBuilder();
-        for (Field x : fieldsList) {
+        for (Field field : fieldListWithoutId) {
             fields.append(" set ");
-            fields.append(x.getName());
+            fields.append(field.getName());
             fields.append(" = ?");
             fields.append(", ");
         }
-        return "update " + entityClassMetaData.getName() + fields.substring(0,fields.length() - 2) + " where id = ?";
+        return "update " + entityClassName + fields.substring(0, fields.length() - 2) + " where " + idFieldName + " = ?";
 
     }
 
     @Override
-    public EntityClassMetaData getEntityClassMetaData() {
+    public EntityClassMetaData<T> getEntityClassMetaData() {
         return entityClassMetaData;
     }
 

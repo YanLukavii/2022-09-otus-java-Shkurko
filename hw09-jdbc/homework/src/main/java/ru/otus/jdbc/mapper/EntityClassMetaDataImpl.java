@@ -9,39 +9,39 @@ import java.util.List;
 
 public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
 
-    Class<T> persistentClass;
+    private final Class<T> persistentClass;
+    private final List<Field> allFieldsListMetaData;
+
 
     public EntityClassMetaDataImpl(Class<T> tClass) {
         persistentClass = tClass;
+        allFieldsListMetaData = getAllFields();
     }
 
     @Override
     public String getName() {
-
         return persistentClass.getSimpleName();
     }
 
     @Override
     public Constructor<T> getConstructor() {
         var con = persistentClass.getDeclaredConstructors();
-
         for (Constructor<?> constructor : con) {
-            if (constructor.getParameterCount() == getAllFields().size())
+            if (constructor.getParameterCount() == allFieldsListMetaData.size())
                 return (Constructor<T>) constructor;
         }
-        return null;
+        throw new RuntimeException("");
     }
 
     @Override
     public Field getIdField() {
-        List<Field> list = getAllFields();
-        for (Field x : list
+        for (Field x : allFieldsListMetaData
         ) {
             if (x.isAnnotationPresent(Id.class)) {
                 return x;
             }
         }
-        return null;
+        throw new RuntimeException("");
     }
 
     @Override
@@ -51,9 +51,8 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
 
     @Override
     public List<Field> getFieldsWithoutId() {
-        List<Field> list = getAllFields();
         List<Field> result = new ArrayList<>();
-        for (Field x : list) {
+        for (Field x : allFieldsListMetaData) {
             if (!(x.isAnnotationPresent(Id.class))) {
                 result.add(x);
             }
