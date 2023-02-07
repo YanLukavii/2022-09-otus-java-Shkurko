@@ -19,13 +19,11 @@ public class SensorDataProcessorBuffered implements SensorDataProcessor {
     private final int bufferSize;
     private final SensorDataBufferedWriter writer;
     private final PriorityBlockingQueue<SensorData> dataBuffer;
-    private final List<SensorData> bufferedData;
 
     public SensorDataProcessorBuffered(int bufferSize, SensorDataBufferedWriter writer) {
         this.bufferSize = bufferSize;
         this.writer = writer;
         this.dataBuffer = new PriorityBlockingQueue<>(bufferSize, new ComparingSensorDataByTime());
-        this.bufferedData = new ArrayList<>();
     }
 
     @Override
@@ -40,9 +38,11 @@ public class SensorDataProcessorBuffered implements SensorDataProcessor {
         if (dataBuffer.isEmpty()) {
             return;
         }
-        try {bufferedData.clear();
+
+        try {List<SensorData> bufferedData = new ArrayList<>();
              dataBuffer.drainTo(bufferedData);
              writer.writeBufferedData(bufferedData);
+
         } catch (Exception e) {
             log.error("Ошибка в процессе записи буфера", e);
         }
@@ -50,7 +50,6 @@ public class SensorDataProcessorBuffered implements SensorDataProcessor {
 
     @Override
     public void onProcessingEnd() {
-        bufferedData.clear();
         flush();
     }
 }
