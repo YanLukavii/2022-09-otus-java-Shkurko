@@ -15,7 +15,8 @@ import lombok.Setter;
 @Setter
 public class Phone {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,  generator = "phones_SEQ_gen")
+    @SequenceGenerator(name = "phones_SEQ_gen", allocationSize = 1)
     Long id;
 
     @Column(name = "number")

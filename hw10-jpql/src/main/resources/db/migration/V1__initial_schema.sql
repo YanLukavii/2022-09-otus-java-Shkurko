@@ -9,11 +9,9 @@ create table client
  */
 
 -- Для @GeneratedValue(strategy = GenerationType.SEQUENCE)
-
- create sequence clients_SEQ start with 1 increment by 50;
- create sequence addresses_SEQ start with 1 increment by 50;
- create sequence phones_SEQ start with 1 increment by 50;
--- create sequence hibernate_sequence start with 1 increment by 1;
+ create sequence clients_SEQ_gen start with 1 increment by 1;
+ create sequence address_SEQ_gen start with 1 increment by 1;
+ create sequence phones_SEQ_gen start with 1 increment by 1;
 
 create table clients
 (

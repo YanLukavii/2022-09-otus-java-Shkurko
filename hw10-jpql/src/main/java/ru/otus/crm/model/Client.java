@@ -15,7 +15,8 @@ import java.util.List;
 public class Client implements Cloneable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,  generator = "clients_SEQ_gen")
+    @SequenceGenerator(name = "clients_SEQ_gen", allocationSize = 1)
     private Long id;
 
     @Column(name = "name")
