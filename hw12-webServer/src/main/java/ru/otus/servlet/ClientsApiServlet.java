@@ -38,7 +38,6 @@ public class ClientsApiServlet extends HttpServlet {
         ServletOutputStream out = response.getOutputStream();
 
         List<Map<String, Object>> clientList = new ArrayList<>();
-
         for (Client client : clients) {
             Map<String, Object> clientMap = new HashMap<>();
             clientMap.put("name", client.getName());
@@ -48,7 +47,6 @@ public class ClientsApiServlet extends HttpServlet {
                 clientMap.put("address", client.getAddress().getStreet());
 
             List<Map<String, String>> numbers = new ArrayList<>();
-
             for (Phone phone : client.getPhones()) {
                 Map<String, String> numberMap = new HashMap<>();
                 numberMap.put("number", phone.getNumber());
