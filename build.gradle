@@ -23,6 +23,7 @@ allprojects {
             dependency "org.openjdk.jmh:jmh-core:${Versions.jmh}"
             dependency "org.openjdk.jmh:jmh-generator-annprocess:${Versions.jmh}"
             dependency("org.glassfish:jakarta.json:${Versions.glassfishJson}")
+            dependency("com.google.code.findbugs:jsr305:${Versions.jsr305}")
         }
     }
 
