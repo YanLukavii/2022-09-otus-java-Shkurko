@@ -1,0 +1,40 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пользователи</title>
+    <script>
+        function getAllClients() {
+            fetch('api/clients/all')
+                .then(response => response.json())
+                .then(client => clientsDataContainer.innerHTML = JSON.stringify(client,null,4));
+        }
+    </script>
+</head>
+<body>
+<h4>Клиенты (json)</h4>
+<button onclick="getAllClients()">Получить всех КЛИЕНТОВ</button>
+<pre id="clientsDataContainer"></pre>
+
+<h4>Заполните поля</h4>
+
+<div class="top">
+    <form action="/api/clients/add" method="post">
+        <label>
+            name <br/>
+            <input type="text" name="name" value="">
+        </label>
+        <br/>
+        <label>
+            address<br/>
+            <input type="text" name="address" value="">
+        </label>
+        <br/>
+        <label>
+            phone<br/>
+            <input type="text" name="phone" value="">
+        </label>
+        <br/><br/>
+        <input type="submit" value="Добавить клиента">
+    </form>
+</div>
+</body>
+</html>
