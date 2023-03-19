@@ -9,4 +9,8 @@ public interface Versions {
 
     String jsr305 = "3.0.2";
 
+    String errorProneAnnotations = "2.11.0";
+    String tomcatAnnotationsApi = "6.0.53";
+    String grpc = "1.44.1";
+
 }
