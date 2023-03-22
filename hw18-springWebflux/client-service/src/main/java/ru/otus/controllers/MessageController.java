@@ -22,6 +22,7 @@ public class MessageController {
     private static final Logger logger = LoggerFactory.getLogger(MessageController.class);
 
     private static final String TOPIC_TEMPLATE = "/topic/response.";
+    private static final String SUPER_ROOM = "1408";
 
     private final WebClient datastoreClient;
     private final SimpMessagingTemplate template;
@@ -33,19 +34,21 @@ public class MessageController {
 
     @MessageMapping("/message.{roomId}")
     public void getMessage(@DestinationVariable String roomId, Message message) {
-        if (roomId.equals("1408")) {
+        logger.info("get message:{}, roomId:{}", message, roomId);
+        if (roomId.equals(SUPER_ROOM)) {
             logger.info("попали на roomId:{} ничего не делаем", roomId);
             return;
         }
-        logger.info("get message:{}, roomId:{}", message, roomId);
 
         saveMessage(roomId, message)
                 .subscribe(msgId -> logger.info("message send id:{}", msgId));
 
         template.convertAndSend(String.format("%s%s", TOPIC_TEMPLATE, roomId),
                 new Message(HtmlUtils.htmlEscape(message.messageStr())));
-    }
 
+        template.convertAndSend(String.format("%s%s", TOPIC_TEMPLATE, SUPER_ROOM),
+                new Message(HtmlUtils.htmlEscape("Комната №" + roomId + " " + message.messageStr())));
+    }
 
     @EventListener
     public void handleSessionSubscribeEvent(SessionSubscribeEvent event) {
@@ -56,7 +59,11 @@ public class MessageController {
             throw new ChatException("Can not get simpDestination header");
         }
         var roomId = parseRoomId(simpDestination);
-
+        if (Long.parseLong(SUPER_ROOM) == roomId) {
+            getAllRoomMessages()
+                    .doOnError(ex -> logger.error("getting messages for roomId:{} failed", roomId, ex))
+                    .subscribe(message -> template.convertAndSend(simpDestination, message));
+        }
         getMessagesByRoomId(roomId)
                 .doOnError(ex -> logger.error("getting messages for roomId:{} failed", roomId, ex))
                 .subscribe(message -> template.convertAndSend(simpDestination, message));
@@ -80,6 +87,18 @@ public class MessageController {
 
     private Flux<Message> getMessagesByRoomId(long roomId) {
         return datastoreClient.get().uri(String.format("/msg/%s", roomId))
+                .accept(MediaType.APPLICATION_NDJSON)
+                .exchangeToFlux(response -> {
+                    if (response.statusCode().equals(HttpStatus.OK)) {
+                        return response.bodyToFlux(Message.class);
+                    } else {
+                        return response.createException().flatMapMany(Mono::error);
+                    }
+                });
+    }
+
+    private Flux<Message> getAllRoomMessages() {
+        return datastoreClient.get().uri("/msg/all")
                 .accept(MediaType.APPLICATION_NDJSON)
                 .exchangeToFlux(response -> {
                     if (response.statusCode().equals(HttpStatus.OK)) {
