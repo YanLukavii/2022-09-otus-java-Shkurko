@@ -20,10 +20,8 @@ import ru.otus.domain.Message;
 @Controller
 public class MessageController {
     private static final Logger logger = LoggerFactory.getLogger(MessageController.class);
-
     private static final String TOPIC_TEMPLATE = "/topic/response.";
     private static final String SUPER_ROOM = "1408";
-
     private final WebClient datastoreClient;
     private final SimpMessagingTemplate template;
 
@@ -43,11 +41,14 @@ public class MessageController {
         saveMessage(roomId, message)
                 .subscribe(msgId -> logger.info("message send id:{}", msgId));
 
+        convertAndSentMessageToRoom(roomId, message);
+        convertAndSentMessageToRoom(SUPER_ROOM, message);
+
+    }
+
+    private void convertAndSentMessageToRoom(String roomId, Message message) {
         template.convertAndSend(String.format("%s%s", TOPIC_TEMPLATE, roomId),
                 new Message(HtmlUtils.htmlEscape(message.messageStr())));
-
-        template.convertAndSend(String.format("%s%s", TOPIC_TEMPLATE, SUPER_ROOM),
-                new Message(HtmlUtils.htmlEscape("Комната №" + roomId + " " + message.messageStr())));
     }
 
     @EventListener
@@ -86,19 +87,15 @@ public class MessageController {
     }
 
     private Flux<Message> getMessagesByRoomId(long roomId) {
-        return datastoreClient.get().uri(String.format("/msg/%s", roomId))
-                .accept(MediaType.APPLICATION_NDJSON)
-                .exchangeToFlux(response -> {
-                    if (response.statusCode().equals(HttpStatus.OK)) {
-                        return response.bodyToFlux(Message.class);
-                    } else {
-                        return response.createException().flatMapMany(Mono::error);
-                    }
-                });
+        return buildHttpGetRequest("/msg/%s", roomId);
     }
 
     private Flux<Message> getAllRoomMessages() {
-        return datastoreClient.get().uri("/msg/all")
+        return buildHttpGetRequest("/msg/all");
+    }
+
+    private Flux<Message> buildHttpGetRequest(String uri, Object... uriVar) {
+        return datastoreClient.get().uri(uri, uriVar)
                 .accept(MediaType.APPLICATION_NDJSON)
                 .exchangeToFlux(response -> {
                     if (response.statusCode().equals(HttpStatus.OK)) {

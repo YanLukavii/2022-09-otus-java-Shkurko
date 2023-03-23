@@ -56,7 +56,7 @@ public class DataController {
     public Flux<MessageDto> getAllMessages() {
 
         return dataStore.loadAllMessages()
-                .map(message -> new MessageDto("Комната №" + message.getRoomId() + " " + message.getMsgText()))
+                .map(message -> new MessageDto(message.getMsgText()))
                 .doOnNext(msgDto -> log.info("msgDto:{}", msgDto))
                 .subscribeOn(workerPool);
 
